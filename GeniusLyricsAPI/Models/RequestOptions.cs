@@ -3,9 +3,9 @@
 
     public class RequestOptions
     {
-        public RequestOptions(string? _title, string? _artist)
+        public RequestOptions(string _title, string _artist)
         {
-            if (_title == null&&_artist == null)
+            if (_title == ""&&_artist == "")
             {
                 throw new ArgumentNullException("At least one of these parameters should have a value.");
             }
@@ -13,9 +13,9 @@
             Artist = _artist;
         }
 
-        public string? Title;
+        public string Title;
 
-        public string? Artist;
+        public string Artist;
 
         /// <summary>
         /// Setting this to true will optimize the query for best results.
