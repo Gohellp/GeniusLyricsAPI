@@ -45,6 +45,9 @@ namespace GeniusLyricsAPI.Models
 
     }
 
+    /// <summary>
+    /// This such a useless class because Genius API response from /albums endpoint doesn't contains album's tracks
+    /// </summary>
     public class Album
     {
 

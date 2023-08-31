@@ -1,6 +1,8 @@
 ﻿using GeniusLyricsAPI.Models;
+using HtmlAgilityPack;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.RegularExpressions;
 
 namespace GeniusLyricsAPI
 {
@@ -21,15 +23,14 @@ namespace GeniusLyricsAPI
 			{
 				BaseAddress = new Uri(_baseUri)
 			};
-
-		}
+	}
 
 		/// <summary>
 		/// Make requaest to /search endpoint
 		/// </summary>
 		/// <param name="options">Standart <see cref="RequestOptions"/></param>
 		/// <returns>Response of Genius api. May return null</returns>
-		public async Task<SearchResults?> SearchSong(RequestOptions options)
+		public async Task<SearchResults> SearchSong(RequestOptions options)
 		{
 			string query = $"/search?q={options.Artist} {options.Title}" + (options.AuthHeader ?"":$"&access_token={_token}");
 
@@ -50,7 +51,7 @@ namespace GeniusLyricsAPI
 				}
 			}
 
-			return searchResults;
+			return searchResults!;
 		}
 
 		/// <summary>
@@ -89,11 +90,11 @@ namespace GeniusLyricsAPI
 		/// </summary>
 		/// <param name="options">Standart <see cref="RequestOptions"/></param>
 		/// <returns>Url of album cover</returns>
-		public async Task<Uri?> GetAlbumCover(RequestOptions options)
+		public async Task<Uri?> GetAlbumCoverUri(RequestOptions options)
 		{
 			Song song = await GetSong(options);
 
-			if(song.Album == null)
+			if(song!.Album == null)
 			{
 				return null;
 			}
@@ -107,9 +108,16 @@ namespace GeniusLyricsAPI
 		/// <returns>Url of album cover</returns>
 		public async Task<Uri> GetAlbumCoverUri(int albumId)
 		{
-			
+			Album? album;
 
-			return new Uri("");
+            using (var request = new HttpRequestMessage(HttpMethod.Get, "/albums/" + albumId))
+			{
+				var response = await _clientApi.SendAsync(request);
+
+				album = await response.Content.ReadFromJsonAsync<Album>();
+            }
+
+			return album!.CoverUri;
 		}
 
 		/// <summary>
@@ -119,9 +127,11 @@ namespace GeniusLyricsAPI
 		/// <returns>Lyrics of song</returns>
 		public async Task<string> GetLyrics(RequestOptions options)
 		{
-			Song song = await GetSong(options);
+			Song? song = await GetSong(options);
 
-			return await LyricsExtractor(song.Uri);
+			string lyrics = await LyricsExtractor(song!.Uri);
+
+            return lyrics;
 		}
 
 		/// <summary>
@@ -137,7 +147,27 @@ namespace GeniusLyricsAPI
 
 		private async Task<string> LyricsExtractor(Uri songUri)
 		{
-			return "";
+			var _client = new HttpClient();
+
+			var response = await _client.GetStringAsync(songUri);
+
+            var doc = new HtmlDocument();
+
+            doc.LoadHtml(response);
+
+            var nodes = doc.DocumentNode
+                .SelectNodes("//div[@id='lyrics-root']/div[contains(@class, 'Lyrics__Container')]");
+
+            string lyrics = "";
+
+            foreach (var node in nodes)
+            {
+                if (node.InnerLength != 0)
+                {
+                    lyrics += Regex.Replace(Regex.Replace(node.InnerHtml.Trim(), "<br>", "\n").Trim(), "<(?!\\s*br\\s*\\/?)[^>]+>", "", RegexOptions.IgnoreCase);
+                }
+            }
+            return lyrics + "\n\n";
 		}
 	}
 }
