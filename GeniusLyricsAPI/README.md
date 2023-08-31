@@ -1,6 +1,6 @@
 # GeniusLyricsAPI
 
-Spotify to Youtube module that converts (searches for) a Spotify link into a Youtube link
+GeniusLyricsAPI is a library that can find information about a track and try to extract the lyrics from the genius website
 
 
 ## Features
