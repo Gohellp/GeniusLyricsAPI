@@ -10,6 +10,10 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <Copyright></Copyright>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <PackageTags>Genius, Lyrics, Song, Track</PackageTags>
+    <Description>GeniusLyricsAPI is a library that can find information about a track and try to extract the lyrics from the genius website</Description>
   </PropertyGroup>
 
   <ItemGroup>
