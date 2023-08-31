@@ -1,5 +1,6 @@
 ﻿using GeniusLyricsAPI.Models;
 using HtmlAgilityPack;
+using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.RegularExpressions;
@@ -47,7 +48,9 @@ namespace GeniusLyricsAPI
 
 				if(response.IsSuccessStatusCode)
 				{
-					searchResults = await response.Content.ReadFromJsonAsync<SearchResults>();
+					string temp = await response.Content.ReadAsStringAsync();
+
+					searchResults = JsonConvert.DeserializeObject<SearchResults>(temp);
 				}
 			}
 
@@ -76,11 +79,16 @@ namespace GeniusLyricsAPI
 		public async Task<Song> GetSong(int songId)
 		{
 			Song? Song = null;
-			using (var request =  new HttpRequestMessage(HttpMethod.Get,"/songs/"+songId))
+			using (var request =  new HttpRequestMessage(HttpMethod.Get,"/songs/"+ songId))
 			{
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
                 var response = await _clientApi.SendAsync(request);
 
-				Song = await response.Content.ReadFromJsonAsync<Song>();
+				string temp = await response.Content.ReadAsStringAsync();
+
+                SongRequestResult _temp = JsonConvert.DeserializeObject<SongRequestResult>(temp)!;
+
+                Song = _temp.Result.Song;
             }
 			return Song!;
 		}
@@ -94,7 +102,7 @@ namespace GeniusLyricsAPI
 		{
 			Song song = await GetSong(options);
 
-			if(song!.Album == null)
+			if (song!.Album == null)
 			{
 				return null;
 			}
@@ -125,14 +133,14 @@ namespace GeniusLyricsAPI
 		/// </summary>
 		/// <param name="options">Standart <see cref="RequestOptions"/></param>
 		/// <returns>Lyrics of song</returns>
-		public async Task<string> GetLyrics(RequestOptions options)
+		/*public async Task<string> GetLyrics(RequestOptions options)
 		{
 			Song? song = await GetSong(options);
 
 			string lyrics = await LyricsExtractor(song!.Uri);
 
             return lyrics;
-		}
+		}*/
 
 		/// <summary>
 		/// Some more chthonic code

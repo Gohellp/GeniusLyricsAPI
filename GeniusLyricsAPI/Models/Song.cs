@@ -2,6 +2,20 @@
 
 namespace GeniusLyricsAPI.Models
 {
+    public class SongRequestResult
+    {
+        [JsonProperty("meta")]
+        public readonly Meta Meta;
+        [JsonProperty("response")]
+        public readonly Result Result;
+    }
+
+    public class Result
+    {
+        [JsonProperty("song")]
+        public readonly Song Song;
+    }
+
     public class Song
     {
         [JsonProperty("id")]
@@ -16,7 +30,7 @@ namespace GeniusLyricsAPI.Models
         [JsonProperty("language")]
         public readonly string LanguageCode;
 
-        [JsonProperty("song_art_image_thumbnail_url\"")]
+        [JsonProperty("song_art_image_thumbnail_url")]
         public readonly Uri ThumbnailUri;
 
         [JsonProperty("song_art_image_url")]
