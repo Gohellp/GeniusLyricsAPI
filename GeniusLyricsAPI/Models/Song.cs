@@ -1,27 +1,126 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
 
 namespace GeniusLyricsAPI.Models
 {
+    public class SongRequestResult
+    {
+        [JsonProperty("meta")]
+        public readonly Meta Meta;
+        [JsonProperty("response")]
+        public readonly Result Result;
+    }
+
+    public class Result
+    {
+        [JsonProperty("song")]
+        public readonly Song Song;
+    }
+
     public class Song
     {
+        [JsonProperty("id")]
+        public readonly int Id;
 
+        [JsonProperty("primary_artist")]
+        public readonly Artist PrimaryArtist;
+
+        [JsonProperty("title")]
+        public readonly string Title;
+
+        [JsonProperty("language")]
+        public readonly string LanguageCode;
+
+        [JsonProperty("song_art_image_thumbnail_url")]
+        public readonly Uri ThumbnailUri;
+
+        [JsonProperty("song_art_image_url")]
+        public readonly Uri CoverUri;
+
+        [JsonProperty("url")]
+        public readonly Uri Uri;
+
+        [JsonProperty("album")]
+        public readonly Album? Album = null;
+
+        [JsonProperty("producer_artists")]
+        public readonly ICollection<Artist> Produsers = new List<Artist>();
+
+        [JsonProperty("writer_artists")]
+        public readonly ICollection<Artist> Writers = new List<Artist>();
+
+        [JsonProperty("featured_artists")]
+        public readonly List<string> FeaturedArtists = new List<string>();
+
+        [JsonProperty("media")]
+        public readonly List<Media> Media = new List<Media>();
+
+        [JsonProperty("translation_songs")]
+        public readonly ICollection<Translation> Translations = new List<Translation>();
+
+    }
+
+    /// <summary>
+    /// This such a useless class because Genius API response from /albums endpoint doesn't contains album's tracks
+    /// </summary>
+    public class Album
+    {
+
+        [JsonProperty("id")]
+        public readonly int Id;
+
+        [JsonProperty("name")]
+        public readonly string Name;
+
+        [JsonProperty("cover_art_url")]
+        public readonly Uri CoverUri;
+
+        [JsonProperty("url")]
+        public readonly Uri Uri;
+
+        [JsonProperty("artist")]
+        public readonly Artist Artist;
+
+        [JsonProperty("release_date_for_display")]
+        public readonly string RealeseDate; //Idk why this is string ¯\_(ツ)_/¯
+
+    }
+
+    public class Media
+    {
+
+        [JsonProperty("provider")]
+        public readonly string Provider;
+
+        [JsonProperty("start")]
+        public readonly int Start = 0; //???
+
+        [JsonProperty("")]
+        public readonly Uri? NativeUri; //Mb only for spotify
+
+        [JsonProperty("url")]
+        public readonly Uri Uri;
+
+        [JsonProperty("type")]
+        public readonly string Type;
+
+    }
+
+    public class Translation
+    {
+        [JsonProperty("id")]
         public int Id { get; }
 
-        public Artist Artist { get; }
-
-        public string Title { get; }
-
+        [JsonProperty("language")]
         public string LanguageCode { get; }
 
-        public Uri ThumbnailUri { get; }
+        [JsonProperty("lyrics_state")]
+        public string LyricsState { get; }
 
-        public Uri Cover { get; }
+        [JsonProperty("title")]
+        public string Title { get; }
 
-
+        [JsonProperty("url")]
+        public Uri Uri { get; }
 
     }
 }
