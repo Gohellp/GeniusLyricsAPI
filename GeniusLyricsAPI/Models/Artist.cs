@@ -4,26 +4,20 @@ namespace GeniusLyricsAPI.Models
 {
     public class Artist
     {
-        [JsonProperty("id")]
+        [JsonProperty(PropertyName = "id")]
         public readonly int Id;
 
         [JsonProperty("name")]
         public readonly string Name;
 
         [JsonProperty("header_image_url")]
-        public readonly string HeaderImageUri;
+        public readonly Uri HeaderImageUri;
 
         [JsonProperty("image_url")]
-        public readonly string ImageUri;
+        public readonly Uri ImageUri;
 
         [JsonProperty("url")]
-        public readonly string Url;
-
-        [JsonProperty("is_verified")]
-        public readonly bool IsVerifided;
-
-        [JsonProperty("is_meme_verified")]
-        public readonly bool IsMemeVerifided;
+        public readonly Uri Url;
 
     }
 }
